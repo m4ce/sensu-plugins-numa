@@ -6,8 +6,15 @@
 #
 
 require 'sensu-plugin/check/cli'
+require 'facter'
 
 class CheckNuma < Sensu::Plugin::Check::CLI
+  option :ignore_virtual,
+         :description => "Ignore NUMA on virtualized hardware",
+         :long => "--ignore-virtual",
+         :boolean => true,
+         :default => false
+
   option :warn,
          :description => "Warn instead of throwing a critical failure",
          :short => "-w",
@@ -54,7 +61,9 @@ class CheckNuma < Sensu::Plugin::Check::CLI
   end
 
   def run
-    if is_supported?()
+    if Facter.value('is_virtual') and config[:ignore_virtual]
+      ok("NUMA is not supported (Virtual hardware)")
+    elsif is_supported?()
       if @cpuinfo['physicalprocessorcount'] > 1
         if numa_nodes_count() > 1 and
           ok("NUMA is enabled")

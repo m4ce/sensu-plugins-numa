@@ -34,4 +34,5 @@ Gem::Specification.new do |s|
   s.version                = SensuPluginsNuma::Version::VER_STRING
 
   s.add_runtime_dependency 'sensu-plugin',   '1.2.0'
+  s.add_runtime_dependency 'facter',   '2.4.4'
 end
